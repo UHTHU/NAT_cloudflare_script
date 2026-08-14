@@ -1,0 +1,20 @@
+# ─── Runtime & machine-specific state (regenerate with the scripts) ───
+config.json
+cloudflared/
+logs/
+.tunnel.pid
+
+# ─── Secrets — NEVER commit these ───
+# cloudflared stores its auth in ~/.cloudflared/ (outside this repo).
+# If you ever copy it into the repo, the whole folder stays ignored:
+.cloudflared/
+cert.pem
+
+# ─── OS / editor noise ───
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
