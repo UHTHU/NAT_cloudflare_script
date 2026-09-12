@@ -32,6 +32,29 @@ This project provides two scripts that wrap [Cloudflare Tunnel (`cloudflared`)](
 
 > **What you need on the dashboard:** a domain that is **already added to Cloudflare** (i.e. its nameservers point at Cloudflare — `*.ns.cloudflare.com`). This is required for named tunnels with custom hostnames.
 
+### ✨ Interactive menu (easiest way to use it)
+
+Just run the script with **no arguments** — it opens a numbered menu so you can add the local
+address + domain interactively, start/stop the tunnel, list and edit existing services, and
+see the running status. Great for non-technical users or one-off tasks.
+
+```bash
+chmod +x nat-tunnel.sh
+./nat-tunnel.sh          # → interactive menu
+```
+
+From the menu you can:
+
+- **Start / Stop / Restart** the configured tunnel.
+- **Show status / URLs** — see if it's running and your public addresses.
+- **Add a service** — type your local URL (e.g. `http://localhost:8000`) and the domain you
+  own (e.g. `app.example.com`) and it wires everything up.
+- **Manage existing services** — pick one and edit its URL/hostname or remove it.
+- **Quick tunnel** — instant random `trycloudflare.com` URL, no login/domain needed.
+
+You can also run the menu explicitly with `./nat-tunnel.sh menu`. All the non-interactive
+commands below still work exactly as before.
+
 ---
 
 ## Step-by-step tutorial
@@ -261,6 +284,7 @@ sudo systemctl enable --now cloudflared-nat
 ```
 
 **Windows** — use **Task Scheduler**:
+
 - Action: Start a program → `cloudflared` → arguments: `tunnel --config C:\Users\<you>\NAT_cloudflare_script\cloudflared\config.yml run nat-tunnel`
 - Trigger: **At startup**.
 
@@ -311,9 +335,11 @@ cloudflared tunnel delete nat-tunnel --force              # remove tunnel
 1. Is the tunnel running? → `.\nat-tunnel.ps1 status`
 2. In the `CONNECTIONS` column, does your tunnel have **any entry**?
    - **Empty `CONNECTIONS`** → that's the bug. Start it:
+
      ```powershell
      .\nat-tunnel.ps1 start
      ```
+
    - **Non-empty `CONNECTIONS`** → the tunnel is fine; check the local service instead (see the next table row).
 
 **Why this happens:** the script's `start` spawns `cloudflared` in the background, but it stops when the PC reboots, the process is killed, or the script's PID file is lost. Another gotcha: if you have **multiple tunnels** (e.g. a pre-existing `CHAU_VPN`), a running `cloudflared` process might belong to *that* tunnel — not yours. `status` shows every tunnel and its live connections, so always verify the **right** tunnel shows connectors.
